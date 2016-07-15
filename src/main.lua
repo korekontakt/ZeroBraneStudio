@@ -24,9 +24,26 @@ if islinux then
   end
 end
 
+-- FreeBSD
+local isfreebsd = false;
+local env_os = io.popen("uname -a", "r"):read("*l");
+if (env_os) then
+	if (env_os:match("FreeBSD")) then
+		local machine = io.popen("uname -m"):read("*l");
+		if (machine == "amd64") then
+			arch = "x64";
+		else
+			arch = "x86";
+		end
+		isfreebsd = true;
+		islinux = false;
+	end
+end
+
 package.cpath = (
   iswindows and 'bin/?.dll;bin/clibs/?.dll;' or
   islinux and ('bin/linux/%s/lib?.so;bin/linux/%s/clibs/?.so;'):format(arch,arch) or
+  isfreebsd and ('bin/freebsd/%s/lib?.so;bin/freebsd/%s/clibs/?.so;'):format(arch,arch) or
   --[[isosx]] 'bin/lib?.dylib;bin/clibs/?.dylib;')
     .. package.cpath
 package.path  = 'lualibs/?.lua;lualibs/?/?.lua;lualibs/?/init.lua;lualibs/?/?/?.lua;lualibs/?/?/init.lua;'

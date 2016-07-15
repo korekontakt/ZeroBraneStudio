@@ -1,10 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Thanks to StackOverflow wiki (http://stackoverflow.com/a/246128)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ $(uname) == 'Darwin' ]]; then
   (cd "$DIR"; open zbstudio/ZeroBraneStudio.app --args "$@")
+elif [[ $(uname) == 'FreeBSD' ]]; then
+  if [[ "$(uname -m)" == 'amd64' ]]; then
+	ARCH=x64
+  else
+	ARCH=x86
+  fi
+  echo "$DIR $ARCH"
+  (cd "$DIR"; bin/freebsd/$ARCH/lua src/main.lua zbstudio "$@") &
 else
   case "$(uname -m)" in
 	x86_64) ARCH=x64;;
